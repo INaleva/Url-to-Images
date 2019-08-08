@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import filedialog
-from tkinter import  ttk
+from tkinter import ttk
+
 import logic
 
 
@@ -13,7 +14,7 @@ class WindowsGui(Frame):
         self.url_label = Label(self, text="Enter URL:", fg="blue")
         self.url_label.grid(row=0, column=0, sticky=W, padx=(start, end), pady=(start, end))
 
-        self.url_address = Entry(self, width=40)
+        self.url_address = Entry(self, text="google.com", width=40)
         self.url_address.grid(row=0, column=1, sticky=W, pady=(start, end))
 
         self.browse_label = Message(self, fg="blue", width=200)
