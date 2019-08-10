@@ -1,3 +1,4 @@
+import os
 import re
 import urllib.error as err
 import urllib.request as req
@@ -47,16 +48,29 @@ def parser_html_to_images(html):
     return urls
 
 
+def download_task(urls, source_url, dest_folder, download_type):
+    path = dest_folder + "\\" + source_url + "\\"  # set path with the url name
+    if not os.path.exists(path):  # crate folder if not exists.
+        os.makedirs(path)
+
+    if download_type == "image":
+        for url in urls:
+            name, ext = os.path.splitext(os.path.basename(url))  # split url into path and basename
+            req.urlretrieve(url, path + name + ext)  # download the image
+
+    elif download_type == "url":
+        text_file = open(path + source_url + ".txt", "w")  # create text file and write urls into it.
+        for url in urls:
+            text_file.write(url + "\n")
+        text_file.close()
+
+
 def fetch_images(source_url, dest_folder, download_type):
     if source_url is not "" and dest_folder is not "":
         connection = check_url(source_url)    # connects only if url exists.
         html = connection.read()  # read html from connection
         urls = parser_html_to_images(html)
-        for url in urls:
-            print(url)
+        download_task(urls, source_url, dest_folder, download_type)
 
     else:
         show_error(source_url, dest_folder)
-
-
-
