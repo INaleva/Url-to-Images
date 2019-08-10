@@ -1,5 +1,6 @@
 import os
 import re
+import threading
 import urllib.error as err
 import urllib.request as req
 from tkinter import messagebox
@@ -48,7 +49,7 @@ def parser_html_to_images(html):
     return urls
 
 
-def download_task(urls, source_url, dest_folder, download_type):
+def download_images(urls, source_url, dest_folder, download_type):
     path = dest_folder + "\\" + source_url + "\\"  # set path with the url name
     if not os.path.exists(path):  # crate folder if not exists.
         os.makedirs(path)
@@ -70,7 +71,8 @@ def fetch_images(source_url, dest_folder, download_type):
         connection = check_url(source_url)    # connects only if url exists.
         html = connection.read()  # read html from connection
         urls = parser_html_to_images(html)
-        download_task(urls, source_url, dest_folder, download_type)
+        download_task = threading.Thread(target=download_images, args=(urls, source_url, dest_folder, download_type))
+        download_task.start()
 
     else:
         show_error(source_url, dest_folder)
