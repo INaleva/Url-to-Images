@@ -5,6 +5,7 @@ import urllib.error as err
 import urllib.request as req
 from tkinter import messagebox
 
+import requests
 from bs4 import BeautifulSoup
 
 
@@ -50,17 +51,25 @@ def parser_html_to_images(html):
 
 
 def download_images(urls, source_url, dest_folder, download_type):
-    path = dest_folder + "\\" + source_url + "\\"  # set path with the url name
-    if not os.path.exists(path):  # crate folder if not exists.
-        os.makedirs(path)
+    local_name, local_ext = os.path.splitext(os.path.basename(source_url))  # split url into path and basename
+
+    if not os.path.exists(dest_folder + '/' + local_name + local_ext):  # crate folder if not exists.
+        os.makedirs(dest_folder + '/' + local_name + local_ext)
 
     if download_type == "image":
         for url in urls:
             name, ext = os.path.splitext(os.path.basename(url))  # split url into path and basename
-            req.urlretrieve(url, path + name + ext)  # download the image
+
+            try:
+                request = requests.get(url)
+                with open(dest_folder + '/' + local_name + local_ext + '/' + name + ext, 'wb') as outfile:
+                    outfile.write(request.content)
+            except OSError or requests.exceptions.InvalidURL:
+                continue
 
     elif download_type == "url":
-        text_file = open(path + source_url + ".txt", "w")  # create text file and write urls into it.
+        text_file = open(dest_folder + '/' + local_name + local_ext + '/' + source_url + ".txt",
+                         "w")  # create text file and write urls into it.
         for url in urls:
             text_file.write(url + "\n")
         text_file.close()
